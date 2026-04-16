@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>feedmeowplz.com — Xin tiền nuôi mèo một cách minh bạch</title>
+  <meta name="description" content="Landing page tĩnh cho feedmeowplz.com - xin tiền nuôi mèo, minh bạch chi phí, có sẵn chú thích vị trí chèn hình ảnh để demo GitHub Actions + S3 + CloudFront + Route 53." />
+  <style>
+    :root {
+      --bg: #fffaf6;
+      --card: #ffffff;
+      --card-soft: #fff2e8;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #ead9cc;
+      --primary: #ff7f32;
+      --primary-2: #ffb65c;
+      --accent: #111827;
+      --success: #179b5b;
+      --danger: #dc3e3e;
+      --shadow: 0 14px 32px rgba(17, 24, 39, 0.08);
+      --radius: 24px;
+      --max: 1160px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255, 182, 92, 0.25), transparent 24%),
+        radial-gradient(circle at top right, rgba(255, 127, 50, 0.15), transparent 20%),
+        var(--bg);
+      line-height: 1.6;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .container {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      padding: 16px 0 6px;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .topbar nav {
+      display: flex;
+      justify-content: flex-end;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .hero {
+      padding: 16px 0 50px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.28fr 0.92fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-main {
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-main::after {
+      content: "";
+      position: absolute;
+      right: -70px;
+      bottom: -70px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(255,127,50,0.16), rgba(255,182,92,0.28));
+      filter: blur(8px);
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      font-size: 1.02rem;
+    }
+
+    .logo-badge {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 1.8rem;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 12px 20px rgba(255, 127, 50, 0.25);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.4rem, 5vw, 4.9rem);
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+    }
+
+    .hero-sub {
+      margin: 16px 0 22px;
+      max-width: 680px;
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+
+    .cta-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 20px;
+      border-radius: 999px;
+      font-weight: 800;
+      border: 1px solid transparent;
+      transition: transform 0.2s ease;
+    }
+
+    .button:hover { transform: translateY(-1px); }
+    .button-primary {
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      box-shadow: 0 14px 26px rgba(255, 127, 50, 0.2);
+    }
+
+    .button-secondary {
+      background: white;
+      border-color: var(--line);
+      color: var(--accent);
+    }
+
+    .pill-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .pill {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: white;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .hero-side {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      justify-content: center;
+    }
+
+    .mini-title {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+    }
+
+    .stat-total {
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #fff, #fff8f2);
+      border-radius: 24px;
+      padding: 22px;
+    }
+
+    .amount {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      margin: 4px 0 8px;
+    }
+
+    .progress {
+      margin-top: 14px;
+    }
+
+    .progress-track {
+      height: 12px;
+      background: #fbe3d3;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 48%;
+      background: linear-gradient(90deg, var(--primary), var(--primary-2));
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .stat-box {
+      padding: 16px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: white;
+    }
+
+    .stat-box strong {
+      display: block;
+      font-size: 1.18rem;
+      margin-bottom: 4px;
+    }
+
+    section {
+      padding: 30px 0;
+    }
+
+    .section-head {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: white;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: clamp(1.8rem, 3vw, 3rem);
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+    }
+
+    .lead {
+      color: var(--muted);
+      max-width: 780px;
+      margin: 0 auto;
+      font-size: 1.05rem;
+    }
+
+    .cards-3,
+    .cards-2 {
+      display: grid;
+      gap: 18px;
+    }
+
+    .cards-3 { grid-template-columns: repeat(3, 1fr); }
+    .cards-2 { grid-template-columns: repeat(2, 1fr); }
+
+    .card {
+      background: rgba(255,255,255,0.92);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow);
+    }
+
+    .card.soft {
+      background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,242,232,0.93));
+    }
+
+    .icon {
+      width: 52px;
+      height: 52px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: #fff5ed;
+      font-size: 1.45rem;
+      margin-bottom: 14px;
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      font-size: 1.2rem;
+    }
+
+    .card p, .card li {
+      color: var(--muted);
+    }
+
+    .card ul {
+      margin: 12px 0 0;
+      padding-left: 18px;
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .photo-card {
+      background: linear-gradient(180deg, #fff, #fff8f2);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .photo-box {
+      min-height: 230px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      border: 2px dashed #d7b9a0;
+      background:
+        repeating-linear-gradient(
+          45deg,
+          rgba(255,255,255,0.9),
+          rgba(255,255,255,0.9) 14px,
+          rgba(255,243,235,0.95) 14px,
+          rgba(255,243,235,0.95) 28px
+        );
+      color: var(--muted);
+      padding: 18px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .tag {
+      display: inline-flex;
+      margin-top: 10px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: white;
+      border: 1px solid var(--line);
+      font-weight: 800;
+    }
+
+    .compare-bad {
+      border: 1px solid rgba(220, 62, 62, 0.18);
+      background: rgba(255, 244, 244, 0.96);
+    }
+
+    .compare-good {
+      border: 1px solid rgba(23, 155, 91, 0.18);
+      background: rgba(242, 255, 247, 0.96);
+    }
+
+    .compare-bad h3 { color: var(--danger); }
+    .compare-good h3 { color: var(--success); }
+
+    .donate-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+
+    .qr-box {
+      min-height: 300px;
+      border-radius: 22px;
+      border: 2px dashed #d7b9a0;
+      background:
+        repeating-linear-gradient(
+          45deg,
+          rgba(255,255,255,0.85),
+          rgba(255,255,255,0.85) 16px,
+          rgba(255,242,232,0.92) 16px,
+          rgba(255,242,232,0.92) 32px
+        );
+      display: grid;
+      place-items: center;
+      text-align: center;
+      color: var(--muted);
+      font-weight: 700;
+      padding: 20px;
+    }
+
+    .budget-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .budget-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: white;
+    }
+
+    .note-box {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px dashed #d7b9a0;
+      background: rgba(255,255,255,0.8);
+      color: var(--muted);
+    }
+
+    .quote {
+      text-align: center;
+      padding: 28px;
+      font-size: clamp(1.2rem, 2vw, 1.8rem);
+      font-weight: 900;
+      line-height: 1.4;
+    }
+
+    .footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+      padding: 18px 0 48px;
+    }
+
+    .disclaimer {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px dashed #d7b9a0;
+      background: rgba(255,255,255,0.78);
+    }
+
+    @media (max-width: 980px) {
+      .hero-grid,
+      .cards-3,
+      .cards-2,
+      .photo-grid,
+      .donate-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        width: min(var(--max), calc(100% - 20px));
+      }
+
+      .hero-main, .hero-side, .card, .photo-card, .quote {
+        padding: 18px;
+      }
+
+      .stat-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar nav {
+        justify-content: flex-start;
+      }
+
+      .button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar container">
+    <nav>
+      <a href="#">Tiếng Việt</a>
+      <a href="#">English</a>
+      <a href="#">日本語</a>
+      <a href="#">中文</a>
+    </nav>
+  </div>
+
+  <header class="hero">
+    <div class="container hero-grid">
+      <div class="panel hero-main">
+        <div class="logo">
+          <div class="logo-badge">🐱</div>
+          <div>FEEDMEOWPLZ.COM</div>
+        </div>
+        <h1>FEED MEOW PLZ.<br/>Xin tiền nuôi mèo, nhưng minh bạch.</h1>
+        <p class="hero-sub">
+          Đây là một landing page tĩnh theo kiểu “xin tiền nuôi mèo” nhưng trình bày rõ ràng: nhận bao nhiêu, chi vào đâu, còn lại bao nhiêu, và những gì các boss đã thật sự được ăn. Phù hợp để bạn demo GitHub, GitHub Actions, S3, CloudFront và Route 53.
+        </p>
+        <div class="cta-row">
+          <a class="button button-primary" href="#donate">🐟 Góp quỹ pate ngay</a>
+          <a class="button button-secondary" href="#photos">📸 Xem bằng chứng mèo</a>
+        </div>
+        <div class="pill-row">
+          <span class="pill">Static HTML/CSS/JS</span>
+          <span class="pill">Dễ chèn ảnh mèo thật</span>
+          <span class="pill">Hợp demo CI/CD</span>
+          <span class="pill">Không cần backend</span>
+        </div>
+      </div>
+
+      <aside class="panel hero-side">
+        <div class="stat-total">
+          <p class="mini-title">Quỹ nuôi mèo hiện tại</p>
+          <div class="amount" id="totalAmount">6.240.000 đ</div>
+          <div style="color: var(--muted);">Từ 124 người thương mèo và không muốn tụi nó đói</div>
+          <div class="progress">
+            <div style="display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:0.95rem;margin-bottom:8px;">
+              <span>Mục tiêu tháng này</span>
+              <strong>13.000.000 đ</strong>
+            </div>
+            <div class="progress-track"><div class="progress-bar"></div></div>
+          </div>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-box">
+            <strong>Đã nhận</strong>
+            <span>6.240.000 đ</span>
+          </div>
+          <div class="stat-box">
+            <strong>Đã chi</strong>
+            <span>4.180.000 đ</span>
+          </div>
+          <div class="stat-box">
+            <strong>Còn lại</strong>
+            <span>2.060.000 đ</span>
+          </div>
+          <div class="stat-box">
+            <strong>Cập nhật</strong>
+            <span>Mỗi tối 21:00</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </header>
+
+  <main>
+    <section id="photos">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Bằng chứng mèo tồn tại</span>
+          <h2>Chỗ này là nơi bạn chèn ảnh thật của các boss</h2>
+          <p class="lead">Tôi đã chú thích rõ từng vị trí để bạn thay bằng ảnh mèo thật, ảnh ăn uống, ảnh bill hoặc ảnh QR sau này.</p>
+        </div>
+
+        <div class="photo-grid">
+          <article class="photo-card">
+            <div class="photo-box">
+              <div>
+                <div style="font-size:3rem;margin-bottom:10px;">🐾</div>
+                <div><strong>VỊ TRÍ CHÈN ẢNH 1</strong></div>
+                <div>Ảnh hero của mèo chính / boss đáng yêu nhất</div>
+                <div style="font-size:0.92rem;margin-top:8px;">Gợi ý file: assets/images/hero-cat.jpg</div>
+              </div>
+            </div>
+            <h3>Boss đại diện thương hiệu</h3>
+            <p>Đây là ảnh nên thay đầu tiên để website có cảm xúc thật hơn ngay khi lên demo.</p>
+            <span class="tag">Ảnh hero mèo</span>
+          </article>
+
+          <article class="photo-card">
+            <div class="photo-box">
+              <div>
+                <div style="font-size:3rem;margin-bottom:10px;">🍽️</div>
+                <div><strong>VỊ TRÍ CHÈN ẢNH 2</strong></div>
+                <div>Ảnh mèo đang ăn / đồ ăn / pate / hạt</div>
+                <div style="font-size:0.92rem;margin-top:8px;">Gợi ý file: assets/images/feeding-time.jpg</div>
+              </div>
+            </div>
+            <h3>Bằng chứng tiền không đi lạc</h3>
+            <p>Ảnh này làm rõ rằng tiền thật sự đi vào đồ ăn chứ không phải “chi phí cảm xúc”.</p>
+            <span class="tag">Ảnh bữa ăn</span>
+          </article>
+
+          <article class="photo-card">
+            <div class="photo-box">
+              <div>
+                <div style="font-size:3rem;margin-bottom:10px;">🧾</div>
+                <div><strong>VỊ TRÍ CHÈN ẢNH 3</strong></div>
+                <div>Ảnh bill mua pate, cát, thuốc hoặc đồ dùng</div>
+                <div style="font-size:0.92rem;margin-top:8px;">Gợi ý file: assets/images/bill-demo.jpg</div>
+              </div>
+            </div>
+            <h3>Minh bạch kiểu có hóa đơn</h3>
+            <p>Rất phù hợp để demo vòng CI/CD thứ 2 hoặc thứ 3: chỉ cần thay ảnh bill mới rồi push.</p>
+            <span class="tag">Ảnh hóa đơn</span>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="reason">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Tại sao nên góp quỹ?</span>
+          <h2>Vì nuôi mèo không rẻ, nhưng trình bày có thể rất rõ ràng</h2>
+          <p class="lead">Phần này giữ tinh thần của trang mẫu: vừa vui, vừa khiến người xem thấy dự án có cấu trúc và có lý do để tin.</p>
+        </div>
+
+        <div class="cards-3">
+          <article class="card soft">
+            <div class="icon">🍗</div>
+            <h3>Đồ ăn tử tế</h3>
+            <p>Boss không thể sống bằng tình yêu thương và những lời hứa. Pate, hạt, snack và nước sạch đều tốn tiền thật.</p>
+          </article>
+          <article class="card soft">
+            <div class="icon">🩺</div>
+            <h3>Chi phí sức khỏe</h3>
+            <p>Tẩy giun, khám lặt vặt, thuốc cơ bản hoặc xử lý sự cố bất ngờ đều cần có quỹ dự phòng.</p>
+          </article>
+          <article class="card soft">
+            <div class="icon">🧼</div>
+            <h3>Cát và đồ dùng</h3>
+            <p>Cát vệ sinh, bát ăn, khăn, túi rác, khử mùi... nghe nhỏ nhưng cộng lại thì không hề nhỏ.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="transparency">
+      <div class="container">
+        <div class="cards-2">
+          <article class="card">
+            <div class="icon">🔍</div>
+            <h3>Cam kết minh bạch của feedmeowplz.com</h3>
+            <ul>
+              <li>Cập nhật tổng tiền nhận và tổng tiền chi theo chu kỳ cố định.</li>
+              <li>Các khoản chi lớn sẽ kèm ảnh bill hoặc ghi chú rõ mục đích.</li>
+              <li>Có thể gắn thêm link sao kê hoặc Google Sheets công khai về sau.</li>
+              <li>Ảnh mèo, ảnh đồ ăn và ảnh bill đều có thể cập nhật trực tiếp qua Git.</li>
+              <li>Website được thiết kế để người xem nhìn là hiểu ngay tiền đang đi đâu.</li>
+            </ul>
+          </article>
+
+          <article class="card">
+            <div class="icon">🚀</div>
+            <h3>Vì sao hợp làm project nâng cấp</h3>
+            <ul>
+              <li>Dễ đưa vào Git để quản lý version từng lần sửa.</li>
+              <li>Dễ tạo branch, PR, merge để demo Git workflow.</li>
+              <li>Dễ update ảnh mèo để tạo nhiều vòng CI/CD thực tế.</li>
+              <li>Dễ triển khai lên S3 + CloudFront với custom domain.</li>
+              <li>Dễ nâng lên IaC bằng CloudFormation sau khi làm tay thành công.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="compare">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">So sánh</span>
+          <h2>Sự khác nhau giữa xin tiền mơ hồ và xin tiền có trách nhiệm</h2>
+        </div>
+
+        <div class="cards-2">
+          <article class="card compare-bad">
+            <h3>❌ Xin tiền kiểu mơ hồ</h3>
+            <ul>
+              <li>Chỉ nói “nuôi mèo tốn lắm” nhưng không có con số.</li>
+              <li>Không có hình ảnh chứng minh mèo đang được chăm thật.</li>
+              <li>Không có bill, không có mục tiêu tháng.</li>
+              <li>Không ai biết tiền còn lại bao nhiêu.</li>
+              <li>Website hoặc bài viết thiếu cấu trúc.</li>
+            </ul>
+          </article>
+
+          <article class="card compare-good">
+            <h3>✅ FeedMeowPlz.com</h3>
+            <ul>
+              <li>Có dashboard thu, chi, còn lại ngay đầu trang.</li>
+              <li>Có khu vực rõ ràng để chèn ảnh mèo và hóa đơn.</li>
+              <li>Có CTA góp quỹ và phần giải thích tiền sẽ dùng vào đâu.</li>
+              <li>Dễ update nội dung để chứng minh website đang được duy trì thật.</li>
+              <li>Rất phù hợp làm portfolio project có CI/CD.</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="donate">
+      <div class="container donate-grid">
+        <article class="card">
+          <span class="eyebrow">Góp quỹ ngay</span>
+          <h2>Quét QR hoặc bấm link để nuôi boss</h2>
+          <p class="lead" style="margin:0 0 18px;max-width:none;text-align:left;">
+            Chỗ này bạn thay bằng QR ngân hàng thật hoặc link donate thật. Tôi đã để sẵn placeholder để bạn dễ chụp hình demo trước khi có nội dung thật.
+          </p>
+
+          <div class="qr-box">
+            <div>
+              <div style="font-size:3.2rem;margin-bottom:10px;">📷</div>
+              <div><strong>VỊ TRÍ CHÈN ẢNH QR</strong></div>
+              <div>Thay bằng mã QR ngân hàng / ảnh chuyển khoản / donate QR</div>
+              <div style="font-size:0.92rem;margin-top:8px;">Gợi ý file: assets/images/qr-donate.png</div>
+            </div>
+          </div>
+
+          <div class="cta-row" style="margin-top:18px;">
+            <a class="button button-primary" href="#">💸 Donate ngay</a>
+            <a class="button button-secondary" href="#">📄 Xem sao kê</a>
+          </div>
+        </article>
+
+        <article class="card">
+          <span class="eyebrow">Tiền sẽ đi đâu?</span>
+          <h2>Phân bổ chi phí nuôi mèo</h2>
+          <div class="budget-list">
+            <div class="budget-item"><span>40% — Pate, hạt, snack</span><strong>Đồ ăn</strong></div>
+            <div class="budget-item"><span>20% — Cát vệ sinh, túi rác, khử mùi</span><strong>Vệ sinh</strong></div>
+            <div class="budget-item"><span>15% — Khám cơ bản, thuốc, tẩy giun</span><strong>Sức khỏe</strong></div>
+            <div class="budget-item"><span>15% — Đồ dùng khác</span><strong>Vận hành</strong></div>
+            <div class="budget-item"><span>10% — Quỹ dự phòng</span><strong>Dự trữ</strong></div>
+          </div>
+
+          <div class="note-box">
+            <strong>Gợi ý demo CI/CD:</strong> sau khi deploy lần đầu, bạn chỉ cần thay ảnh QR, ảnh mèo hoặc ảnh bill rồi push tiếp là có ngay một vòng update thực tế để chụp screenshot cho README.
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="extra-photos">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Khu vực ảnh bổ sung</span>
+          <h2>Thêm ảnh để website nhìn “sống” hơn</h2>
+        </div>
+
+        <div class="cards-2">
+          <article class="card">
+            <div class="photo-box" style="min-height:260px;">
+              <div>
+                <div style="font-size:3rem;margin-bottom:10px;">😼</div>
+                <div><strong>VỊ TRÍ CHÈN ẢNH 4</strong></div>
+                <div>Ảnh mèo ngủ / mèo ngồi nghiêm túc / mèo nhìn camera</div>
+                <div style="font-size:0.92rem;margin-top:8px;">Gợi ý file: assets/images/cat-life.jpg</div>
+              </div>
+            </div>
+            <h3>Ảnh đời sống thường ngày</h3>
+            <p>Phần này làm website bớt giống mẫu demo và giống một dự án thật hơn.</p>
+          </article>
+
+          <article class="card">
+            <div class="photo-box" style="min-height:260px;">
+              <div>
+                <div style="font-size:3rem;margin-bottom:10px;">🛒</div>
+                <div><strong>VỊ TRÍ CHÈN ẢNH 5</strong></div>
+                <div>Ảnh đồ mua mới: hạt, pate, cát, thuốc, bát ăn</div>
+                <div style="font-size:0.92rem;margin-top:8px;">Gợi ý file: assets/images/cat-supplies.jpg</div>
+              </div>
+            </div>
+            <h3>Ảnh vật tư vừa mua</h3>
+            <p>Rất hợp để chứng minh tiền đã được dùng vào những món cụ thể.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="panel quote">
+          “Người ta startup vì đam mê, còn tôi deploy website để xin tiền mua pate cho mèo.”<br/>
+          <span style="font-size:0.94rem;color:var(--muted);font-weight:700;">— Tinh thần của feedmeowplz.com</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <strong>feedmeowplz.com</strong> — Demo static website for GitHub → GitHub Actions → S3 → CloudFront → Route 53
+      <div class="disclaimer">
+        Đây là landing page demo theo concept “xin tiền nuôi mèo” để bạn dùng làm project triển khai và CI/CD. Các khung ảnh đều đã được chú thích rõ vị trí để bạn thay nội dung thật sau này.
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const total = document.getElementById('totalAmount');
+    const finalValue = 6240000;
+    let current = 0;
+    const step = Math.ceil(finalValue / 80);
+
+    function formatVND(n) {
+      return n.toLocaleString('vi-VN') + ' đ';
+    }
+
+    const timer = setInterval(() => {
+      current += step;
+      if (current >= finalValue) {
+        current = finalValue;
+        clearInterval(timer);
+      }
+      total.textContent = formatVND(current);
+    }, 18);
+  </script>
+</body>
+</html>
